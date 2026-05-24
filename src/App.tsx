@@ -1,850 +1,683 @@
-import React, { useState, useEffect } from 'react';
-
-// Highly legible, bilingual localization dictionary supporting LTR English and RTL Hebrew
-const translations = {
-  en: {
-    dir: 'ltr',
-    brand: 'GentleSteps',
-    home: 'Home',
-    shop: 'Resource Shop',
-    myLearning: 'My Learning',
-    about: 'About Me',
-    contact: 'Contact Me',
-    heroTitle: 'Calm, Structured & Tailored Learning',
-    heroSub: 'Empowering children with special needs through structured visual aids, downloadable PDF checklists, and interactive developmental sensory tools.',
-    heroBtn: 'Explore Resources',
-    featuredHeading: 'Targeted Growth Areas',
-    featuredSub: 'Designed to target physical and cognitive milestones while keeping sensory distractions to an absolute minimum.',
-    cognitive: 'Cognitive Development',
-    cognitiveDesc: 'Fosters sorting, pattern tracking, and logical flow with clear step indicators.',
-    sensory: 'Sensory Balance',
-    sensoryDesc: 'Calms overstimulation through soft color blocking, gentle tasks, and paced breathing guides.',
-    motor: 'Fine Motor Control',
-    motorDesc: 'Facilitates coordination using clean tracing layouts, bold borders, and simple click-targets.',
-    shopTitle: 'Curated Educational Worksheets',
-    shopSub: 'Browse digital PDF downloads and interactive learning modules. Test access instant triggers via the simulation control panel.',
-    all: 'All Materials',
-    pdf: 'PDF Worksheet',
-    interactive: 'Interactive Lesson',
-    bundle: 'Resource Bundle',
-    unlockBtn: 'Add to My Learning',
-    unlockedLabel: 'Owned & Ready',
-    dashboardTitle: 'My Learning Sanctuary',
-    dashboardSub: 'Access your purchased materials, download visual routines, or start playable educational activities.',
-    noResources: 'No resources unlocked yet. Select a tester persona in the simulation header above or visit our shop to unlock packages instantly!',
-    launchBtn: 'Launch Interactive Module',
-    downloadBtn: 'Download PDF Worksheets',
-    contactTitle: 'Reach Out Warmly',
-    contactSub: 'Have questions about bespoke resources, special educational packages, or custom adjustments? Drop me a direct message.',
-    nameLabel: 'Your Name (Parent or Educator)',
-    emailLabel: 'Email Address',
-    msgLabel: 'How can I support your child?',
-    sendBtn: 'Send Message via Formspree',
-    aboutTitle: 'About Me & My Mission',
-    aboutSubtitle: 'Specialist Educator for Neurodivergent Learners',
-    aboutP1: 'Hello! I am a certified Special Education Specialist dedicated to guiding children with sensory, motor, and cognitive learning unique needs. Over my years of classroom teaching, I discovered that traditional learning packets are often too cluttered and overwhelming.',
-    aboutP2: 'I create resources with intent: visual layouts that are quiet, step-by-step instructions that prevent overwhelm, and soft tactile colors that let children relax and focus. My goal is to empower parents and educators with structured materials that build independent learning habits.',
-    score: 'Progress Points:',
-    personaTitle: 'Sandbox Mode Simulator Controls',
-    personaLabel: 'Choose Active Customer Tier:',
-    lessonTitle: 'Morning Focus Warm-Up',
-    lessonSubtitle: 'Interactive Session',
-    lessonBack: 'Return to Dashboard',
-    lessonStep: 'Step',
-    lessonOf: 'of',
-    lessonNext: 'Next Step',
-    lessonPrev: 'Previous Step',
-    lessonFinish: 'Finish & Exit',
-    lessonBreatheTitle: '1. Calm Breathing Exercise',
-    lessonBreatheDesc: 'Click the balloon to watch it slowly grow as you inhale, then release it to watch it shrink as you exhale. Let\'s breathe together.',
-    lessonBreatheIn: 'Inhale...',
-    lessonBreatheOut: 'Exhale...',
-    lessonCheckTitle: '2. Visually Structured Success Board',
-    lessonCheckDesc: 'Review and click your tasks as you complete them. Clear daily targets help ease anxiety and daily transitions.',
-    taskWash: 'Wash Face & Hands',
-    taskTeeth: 'Brush Teeth',
-    taskWater: 'Drink water',
-    taskPajamas: 'Change clothes',
-    lessonMatchTitle: '3. Calm Color-Shape Matcher',
-    lessonMatchDesc: 'Help the child identify the shape silhouette in the active frame by selecting the correct shape below.',
-    targetLabel: 'Target Silhouette:',
-    matchSuccess: 'Wonderful matching! You are doing great! 🎉',
-    matchTryAgain: 'That shape is slightly different, let\'s try again!',
-    lessonCompleteTitle: 'Great Job, You Completed the Lesson!',
-    lessonCompleteDesc: 'You completed your morning warm-up routine. You are focused, relaxed, and fully prepared to start your day!'
-  },
-  he: {
-    dir: 'rtl',
-    brand: 'צעדים עדינים',
-    home: 'דף הבית',
-    shop: 'חנות המשאבים',
-    myLearning: 'הלמידה שלי',
-    about: 'קצת עליי',
-    contact: 'צור קשר',
-    heroTitle: 'למידה רגועה, מובנית ומותאמת אישית',
-    heroSub: 'העצמת ילדים עם צרכים מיוחדים באמצעות עזרי למידה ויזואליים, דפי עבודה להורדה ב-PDF, ופעילויות אינטראקטיביות חושיות.',
-    heroBtn: 'גלה משאבים',
-    featuredHeading: 'תחומי התפתחות ממוקדים',
-    featuredSub: 'עוצב בקפידה במיוחד כדי לתמוך במטרות התפתחותיות תוך הפחתת עומס גירויים חושי.',
-    cognitive: 'פיתוח קוגניטיבי',
-    cognitiveDesc: 'מעודד מיון, מעקב אחר דפוסים ותפיסה מרחבית באמצעות שלבים פשוטים וברורים.',
-    sensory: 'וויסות חושי',
-    sensoryDesc: 'מרגיע עומס רגשי וחושי באמצעות צבעים רכים, פעילויות בקצב אישי, ונשימה מודרכת.',
-    motor: 'מוטוריקה עדינה',
-    motorDesc: 'מחזק קואורדינציה באמצעות גבולות עבים, דפי מעקב נקיים, וכפתורי לחיצה מוגדלים.',
-    shopTitle: 'חנות חומרי למידה ודפי עבודה',
-    shopSub: 'עיינו במגוון דפי העבודה ב-PDF ובפעילויות האינטראקטיביות שלנו. בדקו את המערכת באמצעות סרגל הסימולטור.',
-    all: 'כל המשאבים',
-    pdf: 'דף עבודה ב-PDF',
-    interactive: 'שיעור אינטראקטיבי',
-    bundle: 'חבילת משאבים',
-    unlockBtn: 'הוסף ללמידה שלי',
-    unlockedLabel: 'זמין באזור האישי שלי',
-    dashboardTitle: 'מרחב הלמידה הרגוע שלי',
-    dashboardSub: 'גש לחומרי הלמידה שלך, הורד קבצי PDF שימושיים או הפעל מודולים אינטראקטיביים.',
-    noResources: 'עדיין לא פתחת חומרי למידה. השתמש בסימולטור למעלה או בקר בחנות כדי לפתוח חבילות למידה באופן מיידי!',
-    launchBtn: 'הפעל מודול אינטראקטיבי',
-    downloadBtn: 'הורד קובץ PDF',
-    contactTitle: 'צרו קשר חם',
-    contactSub: 'רוצים להתייעץ איתי על משאב מיוחד, חומרי למידה מותאמים אישית או הדרכות? שלחו לי הודעה ישירה.',
-    nameLabel: 'שם מלא (הורה או איש חינוך)',
-    emailLabel: 'כתובת אימייל',
-    msgLabel: 'כיצד אוכל לסייע לילדכם?',
-    sendBtn: 'שלח הודעה',
-    aboutTitle: 'עליי ועל החזון שלי',
-    aboutSubtitle: 'מורה מומחית לחינוך מיוחד עבור ילדים עם רגישויות חושיות וקוגניטיביות',
-    aboutP1: 'שלום! אני מורה מוסמכת לחינוך מיוחד עם ניסיון רב בליווי ותמיכה בילדים נוירו-דייברגנטיים. במהלך עבודתי בכיתה גיליתי שדפי עבודה ומשחקים מסורתיים עמוסים ומסיחי דעת מדי.',
-    aboutP2: 'אני יוצרת משאבים מתוך כוונה מלאה: מבנים חזותיים רגועים, משימות ממוקדות המונעות תסכול, וצבעים עדינים המאפשרים לילדים להירגע ולהתרכז. השאיפה שלי היא לתת להורים ולמורים כלים שמפתחים למידה עצמאית ומהנה.',
-    score: 'נקודות הצלחה:',
-    personaTitle: 'בקרת בדיקת סימולציה',
-    personaLabel: 'בחר סוג מנוי לבדיקה:',
-    lessonTitle: 'חימום ומיקוד בוקר',
-    lessonSubtitle: 'מודול שיעור אינטראקטיבי',
-    lessonBack: 'חזרה לאזור הלמידה',
-    lessonStep: 'שלב',
-    lessonOf: 'מתוך',
-    lessonNext: 'השלב הבא',
-    lessonPrev: 'השלב הקודם',
-    lessonFinish: 'סיום ויציאה',
-    lessonBreatheTitle: '1. תרגיל נשימה מרגיע',
-    lessonBreatheDesc: 'לחץ על הבלון כדי להגדיל אותו בזמן שאתה שואף אוויר, ושחרר כדי לנשוף. בוא ננשום יחד ברגיעה.',
-    lessonBreatheIn: 'שאיפה...',
-    lessonBreatheOut: 'נשיפה...',
-    lessonCheckTitle: '2. לוח הצלחות ויזואלי יומי',
-    lessonCheckDesc: 'סמן משימות פשוטות שסיימת בבוקר. סדר יום ברור מסייע בהפחתת חששות ומתחים.',
-    taskWash: 'שטיפת פנים וידיים',
-    taskTeeth: 'צחצוח שיניים',
-    taskWater: 'שתיית כוס מים',
-    taskPajamas: 'להחליף פיג׳מה',
-    lessonMatchTitle: '3. התאמת צורות שקטה',
-    lessonMatchDesc: 'עזור לילד לזהות את הצללית המוצגת על ידי לחיצה על הצורה התואמת למטה.',
-    targetLabel: 'צללית היעד:',
-    matchSuccess: 'התאמה נפלאה! כל הכבוד! 🎉',
-    matchTryAgain: 'הצורה הזו קצת שונה, בוא ננסה שוב!',
-    lessonCompleteTitle: 'עבודה מדהימה, סיימת את השיעור!',
-    lessonCompleteDesc: 'סיימת את שגרת החימום לבוקר זה. אתה ממוקד, רגוע ומוכן להתחיל יום נפלא!'
-  }
-};
-
-const mockResources = [
-  {
-    id: 'res-1',
-    category: 'sensory',
-    type: 'pdf',
-    price: '$12.00',
-    en: {
-      title: 'Sensory Routine Tracker',
-      desc: 'A calming morning visual tracking board designed to lower transition state anxiety.'
-    },
-    he: {
-      title: 'לוח מעקב שגרה חושית',
-      desc: 'לוח ויזואלי מרגיע לשגרת הבוקר, המיועד להפחתת חרדה במצבי מעבר.'
-    }
-  },
-  {
-    id: 'res-2',
-    category: 'cognitive',
-    type: 'interactive',
-    price: '$15.00',
-    en: {
-      title: 'Morning Focus Warm-Up',
-      desc: 'An interactive, sensory-friendly daily sequence containing visual checklist markers and focus exercises.'
-    },
-    he: {
-      title: 'חימום ומיקוד בוקר',
-      desc: 'שיעור אינטראקטיבי המשלב בלון נשימה מודרך, לוח משימות יומי ומשחק התאמת צורות שקט.'
-    }
-  },
-  {
-    id: 'res-3',
-    category: 'motor',
-    type: 'pdf',
-    price: '$18.00',
-    en: {
-      title: 'Fine Motor Tracing Pack',
-      desc: 'High-contrast, bold-bordered tracing lines to support motor planning and hand stability.'
-    },
-    he: {
-      title: 'חבילת מוטוריקה עדינה',
-      desc: 'דפי עבודה עם קווים עבים ובניגודיות גבוהה, המעודדים תכנון מוטורי וייצוב אחיזה.'
-    }
-  }
-];
+import React, { useState, useEffect, useRef } from "react";
+import Navbar from "./components/Navbar";
+import SandboxControls from "./components/SandboxControls";
+import Hero from "./components/Hero";
+import ResourceShop from "./components/ResourceShop";
+import LearningBoard from "./components/LearningBoard";
+import About from "./components/About";
+import Contact from "./components/Contact";
+import { translations, mockResources, PATH_POINTS, SHAPES_LIST, WORD_ASSOCIATION_LIST, initialProgressState } from "./data";
 
 export default function App() {
-  const [lang, setLang] = useState('he'); // Target Hebrew as default
-  const [currentTab, setCurrentTab] = useState('home');
-  const [unlockedResources, setUnlockedResources] = useState([]);
-  const [activePersona, setActivePersona] = useState('guest');
-  
-  // Interactive Session states
-  const [isLessonActive, setIsLessonActive] = useState(false);
-  const [lessonStep, setLessonStep] = useState(1);
+  const [lang, setLang] = useState<"en" | "he">("he"); // default to Hebrew
+  const [currentTab, setCurrentTab] = useState("home");
+  const [unlockedResources, setUnlockedResources] = useState<string[]>([]);
+  const [activePersona, setActivePersona] = useState("subscriber"); // Default to subscriber for easy testing
+  const [score, setScore] = useState(150);
+  const [pulsingId, setPulsingId] = useState<string | null>(null);
+
+  // Core lesson progress
+  const [progress, setProgress] = useState<Record<string, number>>(initialProgressState);
+
+  // Derived progress statistics
+  const totalCompletedModules = Object.entries(progress).filter(
+    ([id, pct]) => unlockedResources.includes(id) && pct === 100
+  ).length;
+
+  const totalXP = Object.entries(progress)
+    .filter(([id]) => unlockedResources.includes(id))
+    .reduce((acc, [id, pct]) => {
+      const isCompleted = pct === 100;
+      return acc + (isCompleted ? 100 : 0) + (pct as number) * 10;
+    }, 0);
+
+  // Active Interactive Lesson ID inside My Learning view
+  const [activeInteractiveId, setActiveInteractiveId] = useState<string | null>(null);
+  const [downloadModalFile, setDownloadModalFile] = useState<string | null>(null);
+
+  // Sub-tabs configurations
+  const [shopTab, setShopTab] = useState<"pdf" | "interactive">("pdf");
+  const [learningTab, setLearningTab] = useState<"pdf" | "interactive">("pdf");
+
+  // Game 1 state: Breathing balloon & Sandy Sandbox Orbs
   const [balloonScale, setBalloonScale] = useState(1);
   const [isBreathedIn, setIsBreathedIn] = useState(false);
-  const [checklist, setChecklist] = useState({
+  interface Orb {
+    id: number;
+    x: number;
+    y: number;
+    color: string;
+    scale: number;
+    opacity: number;
+  }
+  const [orbs, setOrbs] = useState<Orb[]>([]);
+
+  // Game 2 state: Emotion Matcher
+  const EMOTIONS_LIST = [
+    { key: "feelHappy", icon: "😊", feel: "happy" },
+    { key: "feelCalm", icon: "😌", feel: "calm" },
+    { key: "feelProud", icon: "😎", feel: "proud" },
+    { key: "feelExcited", icon: "🤩", feel: "excited" }
+  ];
+  const [activeEmotionIndex, setActiveEmotionIndex] = useState(0);
+  const [emotionFeedback, setEmotionFeedback] = useState<string | null>(null);
+
+  // Game 3 state: Gentle SVG Line Path Tracing
+  const [currentPathIndex, setCurrentPathIndex] = useState(0);
+  const [isDraggingPathPoint, setIsDraggingPathPoint] = useState(false);
+  const [hasCompletedTracing, setHasCompletedTracing] = useState(false);
+  const [driftMessageActive, setDriftMessageActive] = useState(false);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+
+  // Game 4 state: Daily milestone checklist planner
+  const [plannerChecked, setPlannerChecked] = useState({
     wash: false,
     teeth: false,
     water: false,
-    pajamas: false
+    shoes: false,
+    jacket: false
   });
-  const [selectedShape, setSelectedShape] = useState(null);
-  const [matchFeedback, setMatchFeedback] = useState('');
-  const [targetShape, setTargetShape] = useState('circle');
+  const [plannerFeedback, setPlannerFeedback] = useState("");
+
+  // Game 5 state: Pattern & Shape sorting
+  const [activeShapeIndex, setActiveShapeIndex] = useState(0);
+  const [shapeFeedback, setShapeFeedback] = useState<string | null>(null);
+
+  // Game 6 state: Word association match
+  const [activeAssocIndex, setActiveAssocIndex] = useState(0);
+  const [assocFeedback, setAssocFeedback] = useState<string | null>(null);
+
+  // Form submission feedback simulation state
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const t = translations[lang];
 
+  // Cozy acoustic synthetic notes generator
+  const playTone = (frequency: number, waveType: "sine" | "triangle" = "sine", duration: number = 0.8) => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      osc.type = waveType;
+      osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+      gainNode.gain.setValueAtTime(0.12, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+
+      osc.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration + 0.1);
+    } catch (_) {
+      // Audio sandbox restricted or not supported in preview browser frame environment
+    }
+  };
+
+  const CHIME_PENTATONIC = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00];
+
+  // Coordinate Sandbox customer personas to unlock maps
   useEffect(() => {
-    if (activePersona === 'guest') {
+    if (activePersona === "guest") {
       setUnlockedResources([]);
-      setIsLessonActive(false);
-    } else if (activePersona === 'buyer') {
-      setUnlockedResources(['res-1']);
-      setIsLessonActive(false);
-    } else if (activePersona === 'subscriber') {
-      setUnlockedResources(['res-1', 'res-2', 'res-3']);
+      setActiveInteractiveId(null);
+    } else if (activePersona === "buyer") {
+      // Sensory Regulation & Fine Motor
+      setUnlockedResources(["res-1", "res-2", "res-5", "res-6"]);
+      setActiveInteractiveId(null);
+    } else if (activePersona === "subscriber") {
+      // Entire 12 items
+      setUnlockedResources([
+        "res-1", "res-2", "res-3", "res-4", "res-5", "res-6",
+        "res-7", "res-8", "res-9", "res-10", "res-11", "res-12"
+      ]);
     }
   }, [activePersona]);
 
-  const handlePurchaseMock = (id) => {
+  // Handle watercolor particle orbs fade logic
+  useEffect(() => {
+    if (orbs.length === 0) return;
+    const interval = setInterval(() => {
+      setOrbs((prev) =>
+        prev
+          .map((orb) => ({
+            ...orb,
+            scale: orb.scale + 2.4,
+            opacity: orb.opacity - 0.03
+          }))
+          .filter((orb) => orb.opacity > 0)
+      );
+    }, 30);
+    return () => clearInterval(interval);
+  }, [orbs]);
+
+  // Handle HTML document direction on language switch
+  useEffect(() => {
+    document.documentElement.dir = t.dir;
+    document.documentElement.lang = lang;
+  }, [lang, t]);
+
+  // Handle direct custom mock purchase
+  const handlePurchaseMock = (id: string) => {
     if (!unlockedResources.includes(id)) {
-      setUnlockedResources([...unlockedResources, id]);
+      setUnlockedResources((prev) => [...prev, id]);
+      setScore((s) => s + 20);
+      playTone(523.25, "sine"); // Sweet high C
     }
   };
 
+  // Cross links guide controller
+  const handleCrossGuide = (partnerId: string, currentContext: "shop" | "learning") => {
+    const partnerResource = mockResources.find((r) => r.id === partnerId);
+    if (!partnerResource) return;
+
+    if (currentContext === "shop") {
+      setShopTab(partnerResource.type as "pdf" | "interactive");
+    } else {
+      setLearningTab(partnerResource.type as "pdf" | "interactive");
+    }
+
+    setPulsingId(partnerId);
+    setTimeout(() => {
+      setPulsingId(null);
+    }, 2800);
+
+    // Scroll slightly to the cards
+    const element = document.getElementById(`resource-card-${partnerId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
+  const handlePdfDownload = (id: string) => {
+    setProgress((p) => {
+      const next = { ...p, [id]: 100 };
+      return next;
+    });
+    playTone(523.25, "sine", 0.6);
+  };
+
+  // Playable interactive mechanics
   const handleBreatheToggle = () => {
     if (!isBreathedIn) {
-      setBalloonScale(1.5);
+      setBalloonScale(1.48);
       setIsBreathedIn(true);
+      playTone(293.66, "sine", 1.2); // Calm Re tone
+      setProgress((p) => ({ ...p, "res-2": Math.min(100, (p["res-2"] || 0) + 10) }));
     } else {
       setBalloonScale(1.0);
       setIsBreathedIn(false);
+      playTone(392.00, "sine", 1.2); // Calm Sol tone
+      setScore((s) => s + 5);
+      setProgress((p) => ({ ...p, "res-2": Math.min(100, (p["res-2"] || 0) + 10) }));
     }
   };
 
-  const handleCheckToggle = (key) => {
-    setChecklist({ ...checklist, [key]: !checklist[key] });
+  const spawnOrb = (clientX: number, clientY: number, container: HTMLDivElement) => {
+    const rect = container.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
+    const ratio = Math.max(0, Math.min(1, x / rect.width));
+    const pitchIndex = Math.min(Math.floor(ratio * CHIME_PENTATONIC.length), CHIME_PENTATONIC.length - 1);
+    const triggerTone = CHIME_PENTATONIC[pitchIndex];
+
+    playTone(triggerTone, "sine", 0.9);
+
+    const softPastelColors = [
+      "rgba(147, 197, 253, 0.5)", // soft blue
+      "rgba(167, 243, 208, 0.5)", // soft green
+      "rgba(253, 186, 116, 0.5)", // soft orange
+      "rgba(244, 180, 26, 0.5)",  // soft yellow
+      "rgba(216, 180, 254, 0.5)", // soft purple
+      "rgba(251, 182, 206, 0.5)"  // soft pink
+    ];
+
+    const newOrb: Orb = {
+      id: Date.now() + Math.random(),
+      x,
+      y,
+      color: softPastelColors[Math.floor(Math.random() * softPastelColors.length)],
+      scale: 10,
+      opacity: 0.9
+    };
+
+    setOrbs((prev) => [...prev, newOrb]);
+    setScore((s) => s + 2);
+    setProgress((p) => ({ ...p, "res-2": Math.min(100, (p["res-2"] || 0) + 2) }));
   };
 
-  const handleShapeMatch = (shape) => {
-    setSelectedShape(shape);
-    if (shape === targetShape) {
-      setMatchFeedback(t.matchSuccess);
+  // Emotion matcher game
+  const handleEmotionGuess = (selectedFeel: string) => {
+    const target = EMOTIONS_LIST[activeEmotionIndex];
+    if (selectedFeel === target.feel) {
+      setEmotionFeedback("correct");
+      playTone(523.25, "sine", 0.5); // high positive chime
+      setScore((s) => s + 15);
+      setProgress((p) => ({ ...p, "res-4": Math.min(100, (p["res-4"] || 0) + 25) }));
     } else {
-      setMatchFeedback(t.matchTryAgain);
+      setEmotionFeedback("wrong");
+      playTone(261.63, "triangle", 0.6); // quiet focus tone
     }
   };
 
-  const handleNextTargetShape = () => {
-    setSelectedShape(null);
-    setMatchFeedback('');
-    const shapes = ['circle', 'triangle', 'square'];
-    const next = shapes.filter(s => s !== targetShape)[Math.floor(Math.random() * 2)];
-    setTargetShape(next);
+  const handleNextEmotion = () => {
+    setEmotionFeedback(null);
+    setActiveEmotionIndex((prev) => (prev + 1) % EMOTIONS_LIST.length);
   };
 
-  const handleResetLesson = () => {
-    setLessonStep(1);
-    setIsLessonActive(false);
+  // Daily milestones game
+  const handlePlannerToggle = (key: "wash" | "teeth" | "water" | "shoes" | "jacket") => {
+    const nextChecked = { ...plannerChecked, [key]: !plannerChecked[key] };
+    setPlannerChecked(nextChecked);
+    playTone(329.63, "sine", 0.45); // cheerful Mi chime
+
+    const numChecked = Object.values(nextChecked).filter(Boolean).length;
+    setProgress((p) => ({ ...p, "res-8": numChecked * 20 }));
+
+    const allDone = numChecked === 5;
+    if (allDone) {
+      setPlannerFeedback("finished");
+      playTone(523.25, "sine", 0.8);
+      setScore((s) => s + 40);
+    } else {
+      setScore((s) => s + 5);
+    }
+  };
+
+  const handleResetPlanner = () => {
+    setPlannerChecked({ wash: false, teeth: false, water: false, shoes: false, jacket: false });
+    setPlannerFeedback("");
+    playTone(392.00, "sine", 0.6);
+  };
+
+  // Shape sorter match game
+  const handleShapeSort = (selectedColorKey: string) => {
+    const target = SHAPES_LIST[activeShapeIndex];
+    if (selectedColorKey === target.color) {
+      setShapeFeedback("correct");
+      playTone(440.00, "sine", 0.45);
+      setScore((s) => s + 15);
+      setProgress((p) => ({ ...p, "res-10": Math.min(100, (p["res-10"] || 0) + 34) }));
+    } else {
+      setShapeFeedback("wrong");
+      playTone(293.66, "triangle", 0.6);
+    }
+  };
+
+  const handleNextShape = () => {
+    setShapeFeedback(null);
+    setActiveShapeIndex((prev) => (prev + 1) % SHAPES_LIST.length);
+  };
+
+  // Object sound word association helper
+  const handleAssocGuess = (selectedKey: string) => {
+    const target = WORD_ASSOCIATION_LIST[activeAssocIndex];
+    if (selectedKey === target.key) {
+      setAssocFeedback("correct");
+      playTone(587.33, "sine", 0.5);
+      setScore((s) => s + 15);
+      setProgress((p) => ({ ...p, "res-12": Math.min(100, (p["res-12"] || 0) + 20) }));
+    } else {
+      setAssocFeedback("wrong");
+      playTone(261.63, "triangle", 0.65);
+    }
+  };
+
+  const handleNextAssoc = () => {
+    setAssocFeedback(null);
+    setActiveAssocIndex((prev) => (prev + 1) % WORD_ASSOCIATION_LIST.length);
+  };
+
+  // Smooth SVG stellar path tracing drag controls
+  const handleDragMove = (clientX: number, clientY: number) => {
+    if (!isDraggingPathPoint || hasCompletedTracing || !svgRef.current) return;
+    const rect = svgRef.current.getBoundingClientRect();
+
+    // Convert client touch context to SVG 1000 width, 300 height mapping
+    const mouseX = ((clientX - rect.left) / rect.width) * 1000;
+    const mouseY = ((clientY - rect.top) / rect.height) * 300;
+
+    let closestDistance = Infinity;
+    let closestIndex = 0;
+
+    for (let i = 0; i < PATH_POINTS.length; i++) {
+      const pt = PATH_POINTS[i];
+      const dist = Math.sqrt((pt.x - mouseX) ** 2 + (pt.y - mouseY) ** 2);
+      if (dist < closestDistance) {
+        closestDistance = dist;
+        closestIndex = i;
+      }
+    }
+
+    const targetPos = PATH_POINTS[closestIndex];
+    const dragDeviation = Math.sqrt((targetPos.x - mouseX) ** 2 + (targetPos.y - mouseY) ** 2);
+
+    // Lock dragging to slow, controlled motor trace width logic
+    if (dragDeviation > 65) {
+      setDriftMessageActive(true);
+      setIsDraggingPathPoint(false);
+      playTone(196.0, "triangle", 0.7); // Low quiet G
+      return;
+    }
+
+    if (closestIndex === currentPathIndex + 1) {
+      setCurrentPathIndex(closestIndex);
+      setDriftMessageActive(false);
+
+      const sequentialPitch = 261.63 + closestIndex * 26.16;
+      playTone(sequentialPitch, "sine", 0.4);
+
+      const pct = Math.round((closestIndex / (PATH_POINTS.length - 1)) * 100);
+      setProgress((p) => ({ ...p, "res-6": Math.max(p["res-6"] || 0, pct) }));
+
+      if (closestIndex === PATH_POINTS.length - 1) {
+        setHasCompletedTracing(true);
+        setIsDraggingPathPoint(false);
+        setScore((s) => s + 50);
+
+        // Success chords chimes
+        playTone(329.63, "sine", 0.3);
+        setTimeout(() => playTone(392.0, "sine", 0.3), 110);
+        setTimeout(() => playTone(523.25, "sine", 0.6), 220);
+      }
+    } else if (closestIndex === currentPathIndex - 1) {
+      setCurrentPathIndex(closestIndex);
+    } else if (closestIndex === currentPathIndex) {
+      setDriftMessageActive(false);
+    }
+  };
+
+  const handleRestartTracing = () => {
+    setCurrentPathIndex(0);
+    setHasCompletedTracing(false);
+    setDriftMessageActive(false);
+    setIsDraggingPathPoint(false);
+    playTone(329.63, "sine", 0.8);
+  };
+
+  // Return to classroom dashboard safely & reset game states
+  const exitActiveInteractiveSession = () => {
+    setActiveInteractiveId(null);
     setBalloonScale(1.0);
     setIsBreathedIn(false);
-    setChecklist({ wash: false, teeth: false, water: false, pajamas: false });
-    setSelectedShape(null);
-    setMatchFeedback('');
+    setEmotionFeedback(null);
+    setPlannerChecked({ wash: false, teeth: false, water: false, shoes: false, jacket: false });
+    setPlannerFeedback("");
+    setShapeFeedback(null);
+    setAssocFeedback(null);
+    handleRestartTracing();
+  };
+
+  const handleResetSandbox = () => {
+    let defaultUnlocked: string[] = [];
+    if (activePersona === "guest") {
+      defaultUnlocked = [];
+    } else if (activePersona === "buyer") {
+      defaultUnlocked = ["res-1", "res-2", "res-5", "res-6"];
+    } else if (activePersona === "subscriber") {
+      defaultUnlocked = [
+        "res-1", "res-2", "res-3", "res-4", "res-5", "res-6",
+        "res-7", "res-8", "res-9", "res-10", "res-11", "res-12"
+      ];
+    }
+    setUnlockedResources(defaultUnlocked);
+
+    const defaultProgress = {
+      "res-1": 40,
+      "res-2": 100,
+      "res-3": 0,
+      "res-4": 40,
+      "res-5": 100,
+      "res-6": 0,
+      "res-7": 0,
+      "res-8": 40,
+      "res-9": 100,
+      "res-10": 0,
+      "res-11": 40,
+      "res-12": 0
+    };
+    setProgress(defaultProgress);
+
+    setScore(150);
+    setBalloonScale(1.0);
+    setIsBreathedIn(false);
+    setOrbs([]);
+    setActiveEmotionIndex(0);
+    setEmotionFeedback(null);
+    setCurrentPathIndex(0);
+    setIsDraggingPathPoint(false);
+    setHasCompletedTracing(false);
+    setDriftMessageActive(false);
+    setPlannerChecked({ wash: false, teeth: false, water: false, shoes: false, jacket: false });
+    setPlannerFeedback("");
+    setActiveShapeIndex(0);
+    setShapeFeedback(null);
+    setActiveAssocIndex(0);
+    setAssocFeedback(null);
+
+    setActiveInteractiveId(null);
+    setDownloadModalFile(null);
+
+    playTone(329.63, "triangle", 0.8);
+  };
+
+  const currentWindingPathStr = PATH_POINTS.map((pt, i) =>
+    i === 0 ? `M ${pt.x} ${pt.y}` : `L ${pt.x} ${pt.y}`
+  ).join(" ");
+
+  // Handle mock message submit
+  const handleSimulateMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormSubmitted(true);
+    playTone(523.25, "sine", 0.6);
+    setTimeout(() => setFormSubmitted(false), 5000);
+  };
+
+  const handleNavigate = (tab: string, subTab?: "pdf" | "interactive") => {
+    setCurrentTab(tab);
+    if (subTab) {
+      if (tab === "shop") {
+        setShopTab(subTab);
+      } else if (tab === "myLearning") {
+        setLearningTab(subTab);
+      }
+    }
   };
 
   return (
-    <div dir={t.dir} className="min-h-screen flex flex-col bg-slate-50 text-slate-700 transition-all duration-300">
-      
-      {/* Primary Workspace Navigation Bar */}
-      <header className="sticky top-0 bg-white/90 backdrop-blur-md border-b border-slate-200/50 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <button 
-            onClick={() => { setCurrentTab('home'); setIsLessonActive(false); }}
-            className="flex items-center gap-3 hover:opacity-85 transition"
-          >
-            <span className="bg-sky-500 text-white w-9 h-9 rounded-full flex items-center justify-center font-bold text-lg">🕊️</span>
-            <span className="font-semibold text-xl tracking-tight text-slate-800">{t.brand}</span>
-          </button>
+    <div dir={t.dir} className="min-h-screen flex flex-col bg-[#FAF8F5] text-slate-705 transition-all duration-300">
+      {/* Dynamic Bilingual Navbar */}
+      <Navbar
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+        lang={lang}
+        setLang={setLang}
+        isLessonActive={activeInteractiveId !== null}
+        setIsLessonActive={(active) => {
+          if (!active) {
+            exitActiveInteractiveSession();
+          } else {
+            setActiveInteractiveId("res-2");
+          }
+        }}
+        t={t}
+      />
 
-          {/* Desktop Links Navigation */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold">
-            <button 
-              onClick={() => { setCurrentTab('home'); setIsLessonActive(false); }} 
-              className={`pb-1 border-b-2 transition ${currentTab === 'home' && !isLessonActive ? 'border-sky-500 text-slate-800' : 'border-transparent text-slate-400 hover:text-slate-800'}`}
-            >
-              {t.home}
-            </button>
-            <button 
-              onClick={() => { setCurrentTab('shop'); setIsLessonActive(false); }} 
-              className={`pb-1 border-b-2 transition ${currentTab === 'shop' ? 'border-sky-500 text-slate-800' : 'border-transparent text-slate-400 hover:text-slate-800'}`}
-            >
-              {t.shop}
-            </button>
-            <button 
-              onClick={() => setCurrentTab('myLearning')} 
-              className={`pb-1 border-b-2 transition ${currentTab === 'myLearning' || isLessonActive ? 'border-sky-500 text-slate-800' : 'border-transparent text-slate-400 hover:text-slate-800'}`}
-            >
-              {t.myLearning}
-            </button>
-            <button 
-              onClick={() => { setCurrentTab('about'); setIsLessonActive(false); }} 
-              className={`pb-1 border-b-2 transition ${currentTab === 'about' ? 'border-sky-500 text-slate-800' : 'border-transparent text-slate-400 hover:text-slate-800'}`}
-            >
-              {t.about}
-            </button>
-            <button 
-              onClick={() => { setCurrentTab('contact'); setIsLessonActive(false); }} 
-              className={`pb-1 border-b-2 transition ${currentTab === 'contact' ? 'border-sky-500 text-slate-800' : 'border-transparent text-slate-400 hover:text-slate-800'}`}
-            >
-              {t.contact}
-            </button>
-          </nav>
+      {/* Developer Sandbox Controls */}
+      <SandboxControls
+        activePersona={activePersona}
+        setActivePersona={setActivePersona}
+        lang={lang}
+        t={t}
+        onResetSandbox={handleResetSandbox}
+      />
 
-          {/* Language Switch Panel */}
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setLang(lang === 'en' ? 'he' : 'en')}
-              className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-xl border border-slate-200 transition text-sm flex items-center gap-2"
-              aria-label="Toggle Language"
-            >
-              <span className="text-xs">🌐</span>
-              {lang === 'en' ? 'עברית' : 'English'}
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* Main Classroom Portal Body */}
+      <main className="flex-grow max-w-6xl w-full mx-auto px-6 py-8">
+        {/* =============== TAB: HOME VIEW =============== */}
+        {currentTab === "home" && activeInteractiveId === null && (
+          <Hero lang={lang} t={t} onNavigate={handleNavigate} />
+        )}
 
-      {/* Simulator Control Area (Mocking Sandbox Experience) */}
-      <div className="bg-sky-50 border-b border-sky-100 py-3 px-6 shadow-inner">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
-          <span className="font-semibold text-slate-600 flex items-center gap-2 uppercase tracking-wider">
-            ⚙️ {t.personaTitle}
-          </span>
-          <div className="flex flex-wrap gap-2">
-            <button 
-              onClick={() => setActivePersona('guest')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition ${activePersona === 'guest' ? 'bg-slate-800 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
-            >
-              {lang === 'en' ? 'Guest Access' : 'אורח'}
-            </button>
-            <button 
-              onClick={() => setActivePersona('buyer')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition ${activePersona === 'buyer' ? 'bg-sky-500 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
-            >
-              {lang === 'en' ? 'One-Time Buyer (Sensory Tracker)' : 'רוכש חלקי (שגרת יום)'}
-            </button>
-            <button 
-              onClick={() => setActivePersona('subscriber')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition ${activePersona === 'subscriber' ? 'bg-emerald-500 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
-            >
-              {lang === 'en' ? 'All-Access Pass Member' : 'מנוי גישה מלאה'}
-            </button>
-          </div>
-        </div>
-      </div>
+        {/* =============== TAB: RESOURCE SHOP VIEW =============== */}
+        {currentTab === "shop" && activeInteractiveId === null && (
+          <ResourceShop
+            lang={lang}
+            t={t}
+            shopTab={shopTab}
+            setShopTab={setShopTab}
+            mockResources={mockResources}
+            unlockedResources={unlockedResources}
+            pulsingId={pulsingId}
+            handleCrossGuide={handleCrossGuide}
+            handlePurchaseMock={handlePurchaseMock}
+            handlePdfDownload={handlePdfDownload}
+            setDownloadModalFile={setDownloadModalFile}
+            setCurrentTab={setCurrentTab}
+            setLearningTab={setLearningTab}
+            setActiveInteractiveId={setActiveInteractiveId}
+            playTone={playTone}
+          />
+        )}
 
-      {/* Main Content Sections */}
-      <main className="flex-grow max-w-6xl w-full mx-auto px-6 py-12">
-        
-        {/* HOME SECTION */}
-        {currentTab === 'home' && !isLessonActive && (
-          <div className="space-y-16 animate-fadeIn">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
-                <h1 className="text-4xl md:text-5xl font-bold text-slate-800 leading-tight">
-                  {t.heroTitle}
-                </h1>
-                <p className="text-lg text-slate-500 leading-relaxed max-w-lg">
-                  {t.heroSub}
+        {/* =============== TAB: LEARNING BOARD WORKSPACE =============== */}
+        {currentTab === "myLearning" && (
+          <LearningBoard
+            lang={lang}
+            t={t}
+            mockResources={mockResources}
+            unlockedResources={unlockedResources}
+            progress={progress}
+            totalXP={totalXP}
+            totalCompletedModules={totalCompletedModules}
+            learningTab={learningTab}
+            setLearningTab={setLearningTab}
+            pulsingId={pulsingId}
+            handlePdfDownload={handlePdfDownload}
+            setDownloadModalFile={setDownloadModalFile}
+            setCurrentTab={setCurrentTab}
+            setShopTab={setShopTab}
+            activeInteractiveId={activeInteractiveId}
+            setActiveInteractiveId={setActiveInteractiveId}
+            playTone={playTone}
+            exitActiveInteractiveSession={exitActiveInteractiveSession}
+            balloonScale={balloonScale}
+            isBreathedIn={isBreathedIn}
+            handleBreatheToggle={handleBreatheToggle}
+            orbs={orbs}
+            spawnOrb={spawnOrb}
+            clearOrbs={() => {
+              setOrbs([]);
+              playTone(196.0, "sine", 0.5);
+            }}
+            activeEmotionIndex={activeEmotionIndex}
+            emotionFeedback={emotionFeedback}
+            handleEmotionGuess={handleEmotionGuess}
+            handleNextEmotion={handleNextEmotion}
+            currentPathIndex={currentPathIndex}
+            isDraggingPathPoint={isDraggingPathPoint}
+            setIsDraggingPathPoint={setIsDraggingPathPoint}
+            hasCompletedTracing={hasCompletedTracing}
+            driftMessageActive={driftMessageActive}
+            setDriftMessageActive={setDriftMessageActive}
+            handleRestartTracing={handleRestartTracing}
+            handleDragMove={handleDragMove}
+            svgRef={svgRef}
+            currentWindingPathStr={currentWindingPathStr}
+            PATH_POINTS={PATH_POINTS}
+            plannerChecked={plannerChecked}
+            plannerFeedback={plannerFeedback}
+            handlePlannerToggle={handlePlannerToggle}
+            handleResetPlanner={handleResetPlanner}
+            activeShapeIndex={activeShapeIndex}
+            shapeFeedback={shapeFeedback}
+            handleShapeSort={handleShapeSort}
+            handleNextShape={handleNextShape}
+            activeAssocIndex={activeAssocIndex}
+            assocFeedback={assocFeedback}
+            handleAssocGuess={handleAssocGuess}
+            handleNextAssoc={handleNextAssoc}
+          />
+        )}
+
+        {/* =============== TAB: ABOUT ME =============== */}
+        {currentTab === "about" && activeInteractiveId === null && (
+          <About lang={lang} t={t} />
+        )}
+
+        {/* =============== TAB: CONTACT ME =============== */}
+        {currentTab === "contact" && activeInteractiveId === null && (
+          <Contact
+            lang={lang}
+            t={t}
+            onSubmitMock={handleSimulateMessage}
+            formSubmitted={formSubmitted}
+          />
+        )}
+
+        {/* Elegant Simulated Download Modal Pop-up */}
+        {downloadModalFile && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn select-none">
+            <div className="bg-white border-2 border-[#DACCE5]/40 rounded-3xl p-8 max-w-md w-full shadow-2xl relative text-center space-y-6 transform scale-100 transition-all duration-300">
+              {/* Absolute Close Option */}
+              <button
+                onClick={() => setDownloadModalFile(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 text-lg cursor-pointer"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+
+              {/* Soothing pastel mint circular backdrop icon */}
+              <div className="w-16 h-16 bg-[#E2F5EE] border border-[#B7EBD0] rounded-full flex items-center justify-center text-3xl mx-auto text-[#23704C] animate-bounce">
+                📄
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-xl font-black text-slate-800">
+                  {lang === "en" ? "Simulating Secure Download" : "הורדת קובץ עבודה וקטורי"}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  {lang === "en"
+                    ? "Creating child-safe printable vectors tailored for sensitive sensory eyes."
+                    : "מייצר קובץ PDF מותאם אישית ברזולוציה גבוהה, ללא הסחות דעת וגירויים מיותרים."}
                 </p>
-                <button 
-                  onClick={() => setCurrentTab('shop')}
-                  className="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-8 py-4 rounded-2xl shadow-sm transition-all duration-300 flex items-center gap-3 w-fit text-lg"
-                >
-                  {t.heroBtn}
-                  <span>{lang === 'en' ? '→' : '←'}</span>
-                </button>
               </div>
-              <div className="flex justify-center items-center">
-                <div className="relative p-2 w-full max-w-md">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/10 to-purple-500/15 rounded-full blur-3xl"></div>
-                  <img 
-                    src="https://lh3.googleusercontent.com/d/1zzBaVgRUzrilZWwKfQfV6UlkGVn9SI-2" 
-                    alt="Calm structured visuals" 
-                    className="relative z-10 w-full h-auto max-h-[380px] object-contain rounded-3xl"
-                  />
-                </div>
-              </div>
-            </div>
 
-            {/* Curated Pedagogical Pillars */}
-            <div className="text-center space-y-4 max-w-2xl mx-auto pt-8">
-              <h2 className="text-3xl font-bold text-slate-800">{t.featuredHeading}</h2>
-              <p className="text-slate-400">{t.featuredSub}</p>
-            </div>
+              {/* Decorative Progress indicator stream simulating active request */}
+              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4.5 text-slate-800 text-xs font-mono font-bold leading-relaxed text-center break-words select-all">
+                <span className="text-sky-500 font-sans block text-xxs font-black uppercase tracking-widest mb-1.5">
+                  {lang === "en" ? "Target File Saved" : "שם הקובץ שהורד"}
+                </span>
+                🔑 {downloadModalFile}.pdf
+              </div>
 
-            <div className="grid sm:grid-cols-3 gap-8">
-              <div className="bg-white p-8 rounded-3xl border border-slate-100 text-center space-y-4 shadow-sm">
-                <div className="w-16 h-16 mx-auto bg-sky-50 rounded-2xl flex items-center justify-center text-sky-500 text-2xl">
-                  🧠
-                </div>
-                <h3 className="text-xl font-bold text-slate-800">{t.cognitive}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{t.cognitiveDesc}</p>
+              <div className="bg-[#E7E2FA] border border-[#D5CBEF] rounded-2xl p-4 text-[#55409E] text-xs font-bold leading-relaxed">
+                🎉 {lang === "en" ? "Simulating secure PDF download... File successfully saved!" : "הורדת הסימולציה הושלמה! הקובץ נשמר בהצלחה בתיקיית ההורדות."}
               </div>
-              <div className="bg-white p-8 rounded-3xl border border-slate-100 text-center space-y-4 shadow-sm">
-                <div className="w-16 h-16 mx-auto bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 text-2xl">
-                  🌬️
-                </div>
-                <h3 className="text-xl font-bold text-slate-800">{t.sensory}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{t.sensoryDesc}</p>
-              </div>
-              <div className="bg-white p-8 rounded-3xl border border-slate-100 text-center space-y-4 shadow-sm">
-                <div className="w-16 h-16 mx-auto bg-purple-50 rounded-2xl flex items-center justify-center text-purple-500 text-2xl">
-                  ✍️
-                </div>
-                <h3 className="text-xl font-bold text-slate-800">{t.motor}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{t.motorDesc}</p>
-              </div>
+
+              <button
+                onClick={() => setDownloadModalFile(null)}
+                className="w-full bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs py-3.5 rounded-xl transition shadow-xs cursor-pointer"
+              >
+                {lang === "en" ? "Return to Sanctuary" : "חזרה למרחב הלמידה"}
+              </button>
             </div>
           </div>
         )}
-
-        {/* RESOURCE SHOP SECTION */}
-        {currentTab === 'shop' && !isLessonActive && (
-          <div className="space-y-10 animate-fadeIn">
-            <div className="space-y-4 max-w-2xl">
-              <h2 className="text-3xl font-bold text-slate-800">{t.shopTitle}</h2>
-              <p className="text-slate-400">{t.shopSub}</p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {mockResources.map((res) => {
-                const isUnlocked = unlockedResources.includes(res.id);
-                const rText = lang === 'en' ? res.en : res.he;
-                
-                return (
-                  <div key={res.id} className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex flex-col justify-between space-y-6 hover:shadow-md transition-all duration-300">
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-start">
-                        <span className="text-xs font-bold tracking-wider uppercase bg-sky-50 text-sky-500 px-3 py-1 rounded-full">
-                          {res.type === 'pdf' ? t.pdf : t.interactive}
-                        </span>
-                        <span className="text-lg font-bold text-slate-800">{res.price}</span>
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-800">{rText.title}</h3>
-                      <p className="text-slate-500 text-sm leading-relaxed">{rText.desc}</p>
-                    </div>
-
-                    {isUnlocked ? (
-                      <button 
-                        onClick={() => setCurrentTab('myLearning')}
-                        className="w-full bg-emerald-50 text-emerald-600 font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 transition-all"
-                      >
-                        ✓ {t.unlockedLabel}
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={() => handlePurchaseMock(res.id)}
-                        className="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-2xl shadow-sm transition flex items-center justify-center gap-2"
-                      >
-                        🔓 {t.unlockBtn}
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* MY LEARNING / INTERACTIVE LESSON SECTION */}
-        {(currentTab === 'myLearning' || isLessonActive) && (
-          <div className="space-y-10 animate-fadeIn">
-            {!isLessonActive ? (
-              <div className="space-y-10">
-                <div className="space-y-4 max-w-2xl">
-                  <h2 className="text-3xl font-bold text-slate-800">{t.dashboardTitle}</h2>
-                  <p className="text-slate-400">{t.dashboardSub}</p>
-                </div>
-
-                {unlockedResources.length === 0 ? (
-                  <div className="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center max-w-xl mx-auto space-y-6 shadow-sm">
-                    <div className="w-16 h-16 mx-auto bg-slate-50 rounded-full flex items-center justify-center text-slate-300 text-2xl">
-                      🔒
-                    </div>
-                    <p className="text-slate-500 text-lg leading-relaxed">{t.noResources}</p>
-                    <button 
-                      onClick={() => setCurrentTab('shop')}
-                      className="bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-2xl shadow-sm transition"
-                    >
-                      {t.shop}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-12">
-                    
-                    {/* Locked/Unlocked Interactive Warmup Launcher */}
-                    {unlockedResources.includes('res-2') && (
-                      <div className="bg-gradient-to-r from-purple-500/5 via-sky-500/5 to-white border border-slate-100 rounded-3xl p-8 max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-                        <div className="space-y-3 text-center md:text-left">
-                          <span className="bg-purple-100 text-purple-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                            {t.interactive}
-                          </span>
-                          <h3 className="text-2xl font-bold text-slate-800">
-                            {lang === 'en' ? mockResources[1].en.title : mockResources[1].he.title}
-                          </h3>
-                          <p className="text-slate-500 text-sm max-w-md">
-                            {lang === 'en' ? mockResources[1].en.desc : mockResources[1].he.desc}
-                          </p>
-                        </div>
-                        <button 
-                          onClick={() => setIsLessonActive(true)}
-                          className="bg-slate-800 hover:bg-slate-900 text-white font-bold px-6 py-4 rounded-2xl shadow-md flex items-center gap-2 whitespace-nowrap transition-all duration-300"
-                        >
-                          ▶ {t.launchBtn}
-                        </button>
-                      </div>
-                    )}
-
-                    {/* PDF Worksheets Panel */}
-                    <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-                      {mockResources
-                        .filter(r => unlockedResources.includes(r.id) && r.type === 'pdf')
-                        .map(res => {
-                          const rText = lang === 'en' ? res.en : res.he;
-                          return (
-                            <div key={res.id} className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm flex items-center gap-6">
-                              <div className="w-14 h-14 bg-red-50 text-red-500 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
-                                📄
-                              </div>
-                              <div className="space-y-1.5 flex-grow">
-                                <h4 className="text-lg font-bold text-slate-800">{rText.title}</h4>
-                                <button 
-                                  onClick={() => alert('Mocking direct PDF download from cloud secure storage.')}
-                                  className="text-sm font-bold text-sky-500 hover:underline flex items-center gap-2"
-                                >
-                                  📥 {t.downloadBtn}
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              
-              /* STEP-BY-STEP INTERACTIVE LESSON SESSION CONTAINER */
-              <div className="max-w-3xl mx-auto bg-white border border-slate-100 rounded-3xl shadow-md overflow-hidden animate-fadeIn">
-                <div className="bg-slate-50 px-8 py-5 flex items-center justify-between border-b border-slate-100">
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-bold text-slate-800">{t.lessonTitle}</h3>
-                    <p className="text-xs text-slate-400">{t.lessonSubtitle}</p>
-                  </div>
-                  <button 
-                    onClick={handleResetLesson}
-                    className="text-sm font-semibold text-sky-500 hover:text-sky-600 flex items-center gap-2"
-                  >
-                    <span>{lang === 'en' ? '←' : '→'}</span>
-                    {t.lessonBack}
-                  </button>
-                </div>
-
-                <div className="bg-slate-100 h-2 w-full flex">
-                  <div 
-                    className="bg-sky-500 h-full transition-all duration-500" 
-                    style={{ width: `${(lessonStep / 4) * 100}%` }}
-                  ></div>
-                </div>
-
-                <div className="p-8 md:p-12 min-h-[380px] flex flex-col justify-center">
-                  
-                  {/* STEP 1: Calming Breathing Balloon */}
-                  {lessonStep === 1 && (
-                    <div className="space-y-8 text-center animate-fadeIn">
-                      <div className="space-y-3">
-                        <h4 className="text-2xl font-bold text-slate-800">{t.lessonBreatheTitle}</h4>
-                        <p className="text-slate-400 text-sm max-w-md mx-auto">{t.lessonBreatheDesc}</p>
-                      </div>
-
-                      <div className="flex justify-center items-center h-48">
-                        <button 
-                          onClick={handleBreatheToggle}
-                          style={{ transform: `scale(${balloonScale})` }}
-                          className="w-24 h-24 rounded-full bg-gradient-to-br from-sky-400 to-purple-400 flex items-center justify-center text-white font-bold text-xs shadow-md transition-all duration-700 ease-out outline-none focus:ring-4 focus:ring-sky-200"
-                        >
-                          {isBreathedIn ? t.lessonBreatheOut : t.lessonBreatheIn}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* STEP 2: Morning Interactive Goal Checklist */}
-                  {lessonStep === 2 && (
-                    <div className="space-y-8 animate-fadeIn">
-                      <div className="space-y-3 text-center">
-                        <h4 className="text-2xl font-bold text-slate-800">{t.lessonCheckTitle}</h4>
-                        <p className="text-slate-400 text-sm max-w-md mx-auto">{t.lessonCheckDesc}</p>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                        <button 
-                          onClick={() => handleCheckToggle('wash')}
-                          className={`p-5 rounded-2xl border text-left flex items-center justify-between transition ${checklist.wash ? 'bg-emerald-50 border-emerald-300' : 'bg-white border-slate-200'}`}
-                        >
-                          <span className="flex items-center gap-3 text-sm font-semibold text-slate-800">
-                            <span className="text-2xl">🧼</span> {t.taskWash}
-                          </span>
-                          <span className={`text-lg ${checklist.wash ? 'text-emerald-500' : 'text-slate-200'}`}>✓</span>
-                        </button>
-                        <button 
-                          onClick={() => handleCheckToggle('teeth')}
-                          className={`p-5 rounded-2xl border text-left flex items-center justify-between transition ${checklist.teeth ? 'bg-emerald-50 border-emerald-300' : 'bg-white border-slate-200'}`}
-                        >
-                          <span className="flex items-center gap-3 text-sm font-semibold text-slate-800">
-                            <span className="text-2xl">🪥</span> {t.taskTeeth}
-                          </span>
-                          <span className={`text-lg ${checklist.teeth ? 'text-emerald-500' : 'text-slate-200'}`}>✓</span>
-                        </button>
-                        <button 
-                          onClick={() => handleCheckToggle('water')}
-                          className={`p-5 rounded-2xl border text-left flex items-center justify-between transition ${checklist.water ? 'bg-emerald-50 border-emerald-300' : 'bg-white border-slate-200'}`}
-                        >
-                          <span className="flex items-center gap-3 text-sm font-semibold text-slate-800">
-                            <span className="text-2xl">💧</span> {t.taskWater}
-                          </span>
-                          <span className={`text-lg ${checklist.water ? 'text-emerald-500' : 'text-slate-200'}`}>✓</span>
-                        </button>
-                        <button 
-                          onClick={() => handleCheckToggle('pajamas')}
-                          className={`p-5 rounded-2xl border text-left flex items-center justify-between transition ${checklist.pajamas ? 'bg-emerald-50 border-emerald-300' : 'bg-white border-slate-200'}`}
-                        >
-                          <span className="flex items-center gap-3 text-sm font-semibold text-slate-800">
-                            <span className="text-2xl">👕</span> {t.taskPajamas}
-                          </span>
-                          <span className={`text-lg ${checklist.pajamas ? 'text-emerald-500' : 'text-slate-200'}`}>✓</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* STEP 3: Shape Matcher Activity */}
-                  {lessonStep === 3 && (
-                    <div className="space-y-8 text-center animate-fadeIn">
-                      <div className="space-y-3">
-                        <h4 className="text-2xl font-bold text-slate-800">{t.lessonMatchTitle}</h4>
-                        <p className="text-slate-400 text-sm max-w-md mx-auto">{t.lessonMatchDesc}</p>
-                      </div>
-
-                      <div className="flex justify-center items-center gap-12 bg-slate-50 p-6 rounded-3xl border border-slate-100 max-w-md mx-auto">
-                        <div>
-                          <span className="text-xs font-semibold text-slate-400 block mb-2">{t.targetLabel}</span>
-                          <div className="w-20 h-20 bg-sky-100 rounded-2xl flex items-center justify-center text-3xl font-bold text-sky-800 select-none">
-                            {targetShape === 'circle' && '●'}
-                            {targetShape === 'triangle' && '▲'}
-                            {targetShape === 'square' && '■'}
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-3">
-                          <button 
-                            onClick={() => handleShapeMatch('triangle')}
-                            className={`w-14 h-14 bg-white border-2 rounded-xl flex items-center justify-center text-xl hover:bg-slate-50 transition ${selectedShape === 'triangle' ? (targetShape === 'triangle' ? 'border-emerald-400' : 'border-red-300') : 'border-slate-200'}`}
-                          >
-                            ▲
-                          </button>
-                          <button 
-                            onClick={() => handleShapeMatch('circle')}
-                            className={`w-14 h-14 bg-white border-2 rounded-xl flex items-center justify-center text-xl hover:bg-slate-50 transition ${selectedShape === 'circle' ? (targetShape === 'circle' ? 'border-emerald-400' : 'border-red-300') : 'border-slate-200'}`}
-                          >
-                            ●
-                          </button>
-                          <button 
-                            onClick={() => handleShapeMatch('square')}
-                            className={`w-14 h-14 bg-white border-2 rounded-xl flex items-center justify-center text-xl hover:bg-slate-50 transition ${selectedShape === 'square' ? (targetShape === 'square' ? 'border-emerald-400' : 'border-red-300') : 'border-slate-200'}`}
-                          >
-                            ■
-                          </button>
-                        </div>
-                      </div>
-
-                      {matchFeedback && (
-                        <div className="space-y-3">
-                          <p className={`text-sm font-semibold ${selectedShape === targetShape ? 'text-emerald-500' : 'text-red-400'}`}>
-                            {matchFeedback}
-                          </p>
-                          {selectedShape === targetShape && (
-                            <button 
-                              onClick={handleNextTargetShape}
-                              className="text-xs bg-sky-500 text-white font-bold px-4 py-2 rounded-lg hover:bg-sky-600 transition animate-pulse"
-                            >
-                              Play Next Shape 🌟
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* STEP 4: Success Module Completion */}
-                  {lessonStep === 4 && (
-                    <div className="space-y-6 text-center animate-fadeIn">
-                      <div className="text-7xl select-none animate-bounce">🏆</div>
-                      <div className="space-y-3">
-                        <h4 className="text-3xl font-bold text-slate-800">{t.lessonCompleteTitle}</h4>
-                        <p className="text-slate-400 text-sm max-w-md mx-auto">{t.lessonCompleteDesc}</p>
-                      </div>
-                    </div>
-                  )}
-
-                </div>
-
-                <div className="bg-slate-50 px-8 py-5 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-xs text-slate-400 font-bold">
-                    {t.lessonStep} {lessonStep} {t.lessonOf} 4
-                  </span>
-
-                  <div className="flex items-center gap-3">
-                    {lessonStep > 1 && lessonStep < 4 && (
-                      <button 
-                        onClick={() => setLessonStep(lessonStep - 1)}
-                        className="bg-white border border-slate-200 text-slate-700 text-sm font-semibold py-2 px-4 rounded-xl hover:bg-slate-50 transition"
-                      >
-                        {t.lessonPrev}
-                      </button>
-                    )}
-                    
-                    {lessonStep < 4 ? (
-                      <button 
-                        onClick={() => setLessonStep(lessonStep + 1)}
-                        className="bg-sky-500 text-white text-sm font-bold py-2.5 px-5 rounded-xl hover:bg-sky-600 transition shadow-sm"
-                      >
-                        {t.lessonNext}
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={handleResetLesson}
-                        className="bg-slate-800 text-white text-sm font-bold py-2.5 px-5 rounded-xl hover:bg-slate-900 transition shadow-sm"
-                      >
-                        {t.lessonFinish}
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ABOUT ME SECTION */}
-        {currentTab === 'about' && !isLessonActive && (
-          <div className="space-y-12 animate-fadeIn max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-8 items-center">
-              <div className="md:col-span-1 text-center">
-                <div className="relative inline-block">
-                  <div className="absolute inset-0 bg-sky-500/15 rounded-full blur-2xl animate-pulse"></div>
-                  <div className="relative w-44 h-44 rounded-full overflow-hidden shadow-md mx-auto border-4 border-white">
-                    <img 
-                      src="https://lh3.googleusercontent.com/d/103hDjoPAzmheDdUZEjAzeUF46ayyOkhA" 
-                      alt="Special Education Educator" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="md:col-span-2 space-y-4 text-center md:text-left">
-                <h2 className="text-3xl font-bold text-slate-800">{t.aboutTitle}</h2>
-                <h3 className="text-lg font-semibold text-sky-500">{t.aboutSubtitle}</h3>
-                <p className="text-slate-500 leading-relaxed text-sm">{t.aboutP1}</p>
-                <p className="text-slate-500 leading-relaxed text-sm">{t.aboutP2}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* CONTACT ME SECTION */}
-        {currentTab === 'contact' && !isLessonActive && (
-          <div className="space-y-10 animate-fadeIn max-w-2xl mx-auto">
-            <div className="space-y-4 text-center">
-              <h2 className="text-3xl font-bold text-slate-800">{t.contactTitle}</h2>
-              <p className="text-slate-400 text-sm">{t.contactSub}</p>
-            </div>
-
-            <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm">
-              <form action="https://formspree.io/f/your_formspree_endpoint_id" method="POST" className="space-y-6">
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-slate-800">{t.nameLabel}</label>
-                  <input 
-                    type="text" 
-                    name="name" 
-                    required 
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none bg-slate-50/50 transition"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-slate-800">{t.emailLabel}</label>
-                  <input 
-                    type="email" 
-                    name="email" 
-                    required 
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none bg-slate-50/50 transition"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-slate-800">{t.msgLabel}</label>
-                  <textarea 
-                    name="message" 
-                    rows="5" 
-                    required 
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none bg-slate-50/50 transition"
-                  ></textarea>
-                </div>
-
-                <button 
-                  type="submit"
-                  className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 px-6 rounded-2xl shadow-sm transition duration-300"
-                >
-                  {t.sendBtn}
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
-
       </main>
 
-      {/* Grounding Footer */}
-      <footer className="bg-white border-t border-slate-100 py-8 text-center text-sm text-slate-400 mt-12">
-        <div className="max-w-6xl mx-auto px-6">
-          &copy; 2026 {t.brand}. Designed gently for special learners.
-        </div>
+      {/* Accessible Footer block */}
+      <footer className="bg-slate-800 text-slate-400 py-6 border-t border-slate-700/60 text-center text-xs space-y-2 mt-auto">
+        <p className="font-semibold text-slate-350">
+          🕊️ {t.brand} — {lang === "en" ? "Calm Classroom and Developmental Sensory Workspace" : 'רשת "צעדים עדינים" — וויסות, פיתוח ומוטוריקה עדינה לחינוך מיוחד'}
+        </p>
+        <p className="font-mono text-[10px] text-slate-500">
+          WCAG 2.1 AA Compliant • Safe Tone Synthesis Engine • Bilingual Hebrew / English
+        </p>
       </footer>
-
     </div>
   );
 }

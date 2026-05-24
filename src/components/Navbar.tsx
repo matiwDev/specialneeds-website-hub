@@ -1,167 +1,195 @@
-import { Heart, User, FlaskConical, Languages } from "lucide-react";
+import React, { useState } from "react";
+import { Menu, X } from "lucide-react";
 
 interface NavbarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-  activePersona: "guest" | "one_time" | "all_access";
-  changePersona: (persona: "guest" | "one_time" | "all_access") => void;
-  language: "en" | "he";
-  setLanguage: (lang: "en" | "he") => void;
+  currentTab: string;
+  setCurrentTab: (tab: string) => void;
+  lang: "en" | "he";
+  setLang: (lang: "en" | "he") => void;
+  isLessonActive: boolean;
+  setIsLessonActive: (active: boolean) => void;
+  t: any;
 }
 
 export default function Navbar({
-  activeTab,
-  setActiveTab,
-  activePersona,
-  changePersona,
-  language,
-  setLanguage,
+  currentTab,
+  setCurrentTab,
+  lang,
+  setLang,
+  isLessonActive,
+  setIsLessonActive,
+  t,
 }: NavbarProps) {
-  const isRtl = language === "he";
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isRtl = t.dir === "rtl";
 
-  // Navigation Links
+  const handleTabClick = (tabId: string) => {
+    setCurrentTab(tabId);
+    if (tabId !== "myLearning") {
+      setIsLessonActive(false);
+    }
+    setIsMenuOpen(false);
+  };
+
   const navItems = [
-    { id: "home", labelEn: "Home", labelHe: "בית חם" },
-    { id: "shop", labelEn: "Resource Shop", labelHe: "חנות עזרי למידה" },
-    { id: "learning", labelEn: "My Learning Shelf", labelHe: "מדף הלמידה שלי" },
-    { id: "dev-panel", labelEn: "Simulator Sandbox", labelHe: "פאנל בדיקה" },
+    { id: "home", label: t.home },
+    { id: "shop", label: t.shop },
+    { id: "myLearning", label: t.myLearning },
+    { id: "about", label: t.about },
+    { id: "contact", label: t.contact },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b-2 border-[#EAD3C8] bg-[#FAF8F5]/95 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        
-        {/* Logo and Brand */}
+    <header className="sticky top-0 bg-white/90 backdrop-blur-md border-b border-slate-200/50 z-40">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        {/* Brand Logo and Title */}
         <button
-          onClick={() => setActiveTab("home")}
-          className={`flex items-center space-x-2.5 text-left focus:outline-none focus:ring-2 focus:ring-[#D98A72]/50 rounded-xl p-1.5 transition-all ${isRtl ? "space-x-reverse" : ""}`}
-          id="nav-logo"
+          onClick={() => handleTabClick("home")}
+          className="flex items-center gap-3 hover:opacity-85 transition focus:outline-none focus:ring-2 focus:ring-sky-200 rounded-xl p-1"
+          aria-label={t.brand}
         >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#FBF2EE] text-[#9B4D36] border-2 border-[#EAD3C8] rotate-[-2deg] hover:rotate-0 transition-transform shadow-xs">
-            <Heart className="h-5 w-5 fill-[#EAD3C8] text-[#9B4D36]" />
-          </div>
-          <div>
-            <span className="block font-sans text-sm font-extrabold tracking-tight text-[#4A3E3D] leading-none mb-1">
-              {isRtl ? "מיס שרה" : "Ms. Sarah's"}
-            </span>
-            <span className="block font-mono text-[9px] font-bold uppercase tracking-wider text-[#3B5B43] bg-[#EFF4F0] px-1.5 py-0.5 rounded border border-[#C9D9CC]">
-              {isRtl ? "פינת ויסות תומכת" : "Special Needs Hub"}
-            </span>
-          </div>
+          <span className="bg-sky-500 text-white w-9 h-9 rounded-full flex items-center justify-center font-bold text-lg">
+            🕊️
+          </span>
+          <span className="font-semibold text-xl tracking-tight text-slate-800">
+            {t.brand}
+          </span>
         </button>
 
-        {/* Primary Navigation links */}
-        <nav className={`hidden md:flex items-center space-x-2 ${isRtl ? "space-x-reverse" : ""}`} aria-label="Main Navigation">
-          {navItems.map((tab) => {
-            const isActive = activeTab === tab.id;
+        {/* Desktop Navigation Links */}
+        <nav className="hidden md:flex items-center gap-8 text-sm font-semibold">
+          {navItems.map((item) => {
+            const isActive =
+              currentTab === item.id || (item.id === "myLearning" && isLessonActive && currentTab === "myLearning");
             return (
               <button
-                key={tab.id}
-                id={`nav-link-${tab.id}`}
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 ${
+                key={item.id}
+                onClick={() => handleTabClick(item.id)}
+                className={`pb-1 border-b-2 transition focus:outline-none focus:ring-2 focus:ring-sky-200 rounded-lg px-2 ${
                   isActive
-                    ? "bg-[#EAD3C8]/30 text-[#4A3E3D] border-2 border-[#D98A72]/40 shadow-xs"
-                    : "text-stone-600 hover:bg-stone-100 hover:text-stone-900 border-2 border-transparent"
+                    ? "border-sky-500 text-slate-800"
+                    : "border-transparent text-slate-400 hover:text-slate-850"
                 }`}
               >
-                {isRtl ? tab.labelHe : tab.labelEn}
-                {isActive && (
-                  <span className="absolute bottom-1.5 left-4 right-4 h-[3px] bg-[#D98A72] rounded-full" />
-                )}
+                {item.label}
               </button>
             );
           })}
         </nav>
 
-        {/* Simulated State Controls & Language Switcher */}
-        <div className={`flex items-center space-x-3 ${isRtl ? "space-x-reverse" : ""}`}>
-          
-          {/* Custom scrapbook Language Switcher */}
-          <div className="flex items-center bg-[#EFF4F0] p-1 rounded-xl border-2 border-[#C9D9CC] shrink-0">
-            <button
-              onClick={() => setLanguage("en")}
-              className={`px-2 py-1 text-[10px] font-mono font-bold uppercase rounded-lg transition-all ${
-                language === "en" 
-                  ? "bg-[#3B5B43] text-white shadow-xs" 
-                  : "text-[#3B5B43] hover:bg-[#3B5B43]/10"
-              }`}
-            >
-              EN
-            </button>
-            <span className="text-[#C9D9CC] px-0.5 font-bold text-[10px]">|</span>
-            <button
-              onClick={() => setLanguage("he")}
-              className={`px-2 py-1 text-[10px] font-mono font-bold uppercase rounded-lg transition-all ${
-                language === "he" 
-                  ? "bg-[#3B5B43] text-white shadow-xs" 
-                  : "text-[#3B5B43] hover:bg-[#3B5B43]/10"
-              }`}
-            >
-              עב
-            </button>
-          </div>
-
-          {/* Persona selector Dropdown */}
-          <div className={`flex items-center space-x-2 bg-[#FDFBF7] border-2 border-[#EAD3C8] rounded-xl p-1 px-3 shadow-xs ${isRtl ? "space-x-reverse" : ""}`}>
-            <span className="hidden lg:inline-flex items-center space-x-1.5 text-[9px] font-mono font-bold uppercase text-stone-500">
-              <User className="h-3.5 w-3.5 text-[#D98A72]" />
-              <span>{isRtl ? "סטטוס:" : "Role:"}</span>
-            </span>
-            <select
-              value={activePersona}
-              onChange={(e) => changePersona(e.target.value as any)}
-              className="text-xs font-bold bg-transparent text-[#4A3E3D] border-none focus:outline-none focus:ring-0 cursor-pointer py-1"
-              id="persona-dropdown"
-              aria-label="Filter by Testing Role"
-            >
-              <option value="guest">
-                {isRtl ? "אורח קיים" : "Guest / Unauthenticated"}
-              </option>
-              <option value="one_time">
-                {isRtl ? "רוכש יחיד (מעקב חושי)" : "One-Time Buyer (owns Tracker)"}
-              </option>
-              <option value="all_access">
-                {isRtl ? "מנוי מלא גישה (VIP)" : "All-Access Subscriber"}
-              </option>
-            </select>
-          </div>
-
-          {/* Dev Panel Indicator Icon shortcut */}
+        {/* Custom Actions (Language switch + mobile drawer toggle) */}
+        <div className="flex items-center gap-4">
           <button
-            onClick={() => setActiveTab("dev-panel")}
-            className={`p-2.5 rounded-xl border-2 transition-all ${
-              activeTab === "dev-panel"
-                ? "bg-[#FBF2EE] text-[#9B4D36] border-[#D98A72]"
-                : "bg-[#FDFBF7] text-stone-500 border-stone-250 hover:bg-[#FBF2EE]"
-            }`}
-            title={isRtl ? "פאנל בדיקה דיאגנוסטי" : "Developer Testing Panel"}
-            id="nav-dev-shortcut"
+            onClick={() => setLang(lang === "en" ? "he" : "en")}
+            className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-xl border border-slate-200 transition text-sm flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-slate-350"
+            aria-label="Toggle Language"
           >
-            <FlaskConical className="h-4.5 w-4.5" />
+            <span className="text-xs">🌐</span>
+            {lang === "en" ? "עברית" : "English"}
+          </button>
+
+          {/* Accessible Hamburger Menu Button - Touch Target is >= 44px (explicitly 48px) */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden flex items-center justify-center w-12 h-12 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-850 transition focus:outline-none focus:ring-2 focus:ring-sky-200"
+            aria-expanded={isMenuOpen}
+            aria-label="Toggle navigation menu"
+            id="mobile-hamburger-btn"
+          >
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
       </div>
 
-      {/* Accessible Mobile Menu Helper Block */}
-      <div className={`md:hidden flex h-11 items-center justify-around border-t-2 border-[#EAD3C8] bg-[#FAF8F5] px-2 ${isRtl ? "flex-row-reverse" : ""}`}>
-        {navItems.map((tab) => {
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`text-[10.5px] font-extrabold px-2.5 py-1 rounded-lg transition-all ${
-                isActive 
-                  ? "bg-[#EAD3C8]/40 text-[#4A3E3D]" 
-                  : "text-stone-600 hover:bg-stone-105"
-              }`}
-            >
-              {isRtl ? tab.labelHe : tab.labelEn}
-            </button>
-          );
-        })}
-      </div>
+      {/* Responsive mobile overlay/drawer */}
+      {isMenuOpen && (
+        <>
+          {/* Backdrop Blur Overlay with Click Handler to Close */}
+          <div
+            className="md:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 transition-opacity"
+            onClick={() => setIsMenuOpen(false)}
+            aria-hidden="true"
+          />
+
+          {/* Drawer Panel Menu */}
+          <div
+            className={`md:hidden fixed inset-y-0 ${
+              isRtl ? "right-0" : "left-0"
+            } w-72 bg-white shadow-2xl z-50 p-6 flex flex-col justify-between border-t border-slate-100`}
+            style={{
+              animation: "slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+            }}
+            role="dialog"
+            aria-modal="true"
+          >
+            {/* Slide animation CSS rule */}
+            <style>{`
+              @keyframes slideIn {
+                from {
+                  transform: ${isRtl ? "translateX(100%)" : "translateX(-100%)"};
+                }
+                to {
+                  transform: translateX(0);
+                }
+              }
+            `}</style>
+
+            <div className="space-y-6">
+              {/* Drawer Brand Section */}
+              <div className={`flex items-center justify-between border-b pb-4 border-slate-100 ${isRtl ? "flex-row-reverse" : ""}`}>
+                <div className="flex items-center gap-2">
+                  <span className="bg-sky-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-base">
+                    🕊️
+                  </span>
+                  <span className="font-bold text-lg text-slate-800">
+                    {t.brand}
+                  </span>
+                </div>
+                {/* Close Button with 44px min touch target */}
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                  aria-label="Close menu"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Navigation Items Link Stack */}
+              <nav className="flex flex-col gap-4 text-base font-bold">
+                {navItems.map((item) => {
+                  const isActive =
+                    currentTab === item.id || (item.id === "myLearning" && isLessonActive && currentTab === "myLearning");
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => handleTabClick(item.id)}
+                      className={`w-full py-3 px-4 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-sky-200 ${
+                        isRtl ? "text-right" : "text-left"
+                      } ${
+                        isActive
+                          ? "bg-sky-50 text-sky-600 border border-sky-100"
+                          : "text-slate-600 hover:bg-slate-105"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            {/* Quiet accessibility indicator */}
+            <div className={`border-t border-slate-100 pt-4 text-[11px] font-mono text-slate-400 ${isRtl ? "text-right" : "text-left"}`}>
+              <span>GentleSteps Special Needs Classroom</span>
+            </div>
+          </div>
+        </>
+      )}
     </header>
   );
 }
