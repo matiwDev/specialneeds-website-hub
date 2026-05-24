@@ -1,0 +1,6 @@
+{
+  "name": "Special Needs Resource Portal",
+  "description": "A calm, highly accessible educational resource store and interactive learning portal for special needs educators and parents.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

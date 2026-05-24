@@ -1,0 +1,65 @@
+{
+  "resources": [
+    {
+      "id": "visual-schedule-cards",
+      "title": "Daily Routine Visual Schedule Cards",
+      "description": "Pack of 36 high-contrast, visual-routine cards designed to lower transition anxiety and support speech therapy. Standardized symbols are easy to point to and sequence.",
+      "type": "pdf",
+      "price": 490,
+      "category": "Sensory",
+      "mockSecureUrl": "/secured-assets/downloads/Visual_Routine_Cards_Printable.pdf",
+      "content": "### PRINTABLE ROUTINE CARDS KIT\n\n- **Target Audience:** Non-verbal or highly visual learners.\n- **Instructions:** Cut pages into 3x3 inch cards, laminate, and attach velcro backings to stick onto daily timeline grids.\n- **Suggested Routine sequences:**\n  1. Morning Routine: Wake Up -> Brushing Teeth -> Dressing -> breakfast -> Bus\n  2. Cognitive Task Transitions: Task -> 5 Min Timer -> Reward Select -> Clean Up"
+    },
+    {
+      "id": "calming-body-narratives",
+      "title": "Calming My Body: Interactive Social Narratives",
+      "description": "A social script focusing on self-regulation when experiencing hyper-arousal or overstimulation. Includes custom breathing templates and cognitive visual thermometers.",
+      "type": "pdf",
+      "price": 350,
+      "category": "Behavior",
+      "mockSecureUrl": "/secured-assets/downloads/Calming_My_Body_Social_Narrative.pdf",
+      "content": "### SOCIAL NARRATIVE PROTOCOLS\n\n- **Objective:** Help neurodivergent learners identify escalating sensory states before reaching meltdown threshold.\n- **Parent/Educator Scripting:**\n  - Read the social script together *during neutral, calm times*, never only during an escalation.\n  - Encourage children to select their calm-down tool (e.g., noise-canceling headphones, weighted lap pad) using the selection stickers.\n  - Practice the 4-7-8 balloon belly breathing visual scale."
+    },
+    {
+      "id": "interactive-soundscape-panel",
+      "title": "Interactive Sensory Soundscape Dashboard",
+      "description": "An interactive sensory playroom panel. It plays calming nature, pink noise, and organic rhythms matched with soft, moving pastel visuals to soothe anxious children in sensory rooms or cool-down corners.",
+      "type": "interactive",
+      "price": 790,
+      "category": "Sensory",
+      "mockSecureUrl": "/assets/interactive/soundscape",
+      "content": "### INTERACTIVE CALMING SOUNDSCAPE ENGINE\n\nWelcome to your calming playroom! Move your mouse or tap tiles on the canvas to generate soft pastel visuals and play organic synthesizer chords. It helps focus overstimulated senses using low-frequency binaural drones."
+    },
+    {
+      "id": "first-then-rewards-board",
+      "title": "Adaptive 'First-Then' Digital Reward Board",
+      "description": "An interactive digital visual board helping children keep track of tasks. Place custom symbols into 'First' and positive reinforcers into 'Then' to incentivize cooperation.",
+      "type": "interactive",
+      "price": 0,
+      "category": "Communication",
+      "mockSecureUrl": "/assets/interactive/first-then-board",
+      "content": "### DIGITIZED FIRST-THEN SYSTEM\n\nSelect action icons (e.g., 'Do Math', 'Write Name') and reward icons (e.g., '10 Min Tablet', 'Bubble Play') to construct instant, readable visual cues for target task execution."
+    },
+    {
+      "id": "emotions-matching-cards",
+      "title": "Emotions Matching & Recognition Game",
+      "description": "Build facial literacy and empathy in children with ASD. Match human emotive faces with comforting illustrations and write descriptive emotional labels to build descriptive vocabulary.",
+      "type": "interactive",
+      "price": 550,
+      "category": "Communication",
+      "mockSecureUrl": "/assets/interactive/emotions-match",
+      "content": "### INTERACTIVE EMOTIONAL MATCH GAME CONFIG\n\nDrag face illustration cards of friendly animal avatars representing: Joy, Sadness, Overstimulation, Calm, and Surprise to build social comprehension in a low-stakes format."
+    },
+    {
+      "id": "motor-tracing-guide",
+      "title": "Pre-Writing Tracing Coordination Sheets",
+      "description": "15 pages of calm, high-contrast tracing exercises. Gradually escalates from standard wavy lines to complex curves, supporting fine motor control and bilateral integration.",
+      "type": "pdf",
+      "price": 290,
+      "category": "Fine Motor Skills",
+      "mockSecureUrl": "/secured-assets/downloads/Fine_Motor_Tracing_Pack.pdf",
+      "content": "### TRACING SHEETS INSTRUCTIONAL SUMMARY\n\nPrint these out and secure them on heavy cardstock. Utilize thick crayons or easy-grip sensory writing implements to guide muscle-memory trace routes. Stencils and dotted tracks are labeled to encourage correct stroke direction."
+    }
+  ],
+  "userProfiles": {}
+}

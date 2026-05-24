@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Safety Net: Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Hardened Global Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && (request.auth.token.email_verified == true);
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Bootstrapped Admin: maps to user email from runtime metadata
+    function isAdmin() {
+      return isEmailVerified() && (request.auth.token.email == "matiskp@gmail.com");
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Entity Specific Validators ---
+    function isValidResource(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.title is string && data.title.size() <= 100
+        && data.description is string && data.description.size() <= 1000
+        && data.type is string && (data.type == "pdf" || data.type == "interactive")
+        && data.price is int && data.price >= 0
+        && data.category is string && data.category.size() <= 50;
+    }
+
+    function isValidUserProfile(data) {
+      return data.userId is string && data.userId.size() <= 128
+        && data.email is string && data.email.size() <= 200
+        && data.role is string && (data.role == "parent" || data.role == "educator" || data.role == "admin")
+        && data.unlockedResourceIds is list && data.unlockedResourceIds.size() <= 200;
+    }
+
+    // --- Path Specific Matchers ---
+
+    // 2. Resources Catalog Collection
+    match /resources/{resourceId} {
+      allow read: if isSignedIn();
+      allow create, update: if isAdmin() && isValidId(resourceId) && isValidResource(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // 3. User Profiles Collection
+    match /userProfiles/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming())
+        // Prevent Self-Assigned Roles: profile role cannot be admin on creation unless they are authorized admin
+        && (incoming().role != "admin" || request.auth.token.email == "matiskp@gmail.com");
+      
+      allow update: if isOwner(userId) && isValidUserProfile(incoming())
+        && (
+          // Action: Purchase or unlock resources
+          (incoming().diff(existing()).affectedKeys().hasOnly(['unlockedResourceIds'])) ||
+          // Action: Update role preference
+          (incoming().diff(existing()).affectedKeys().hasOnly(['role']) && incoming().role != "admin")
+        );
+
+      allow delete: if isAdmin();
+    }
+  }
+}

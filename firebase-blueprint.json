@@ -1,0 +1,81 @@
+{
+  "entities": {
+    "resource": {
+      "title": "Resource",
+      "description": "Educational special needs learning material, such as PDF worksheets or Interactive activities.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the resource"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the resource"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of contents"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["pdf", "interactive"],
+          "description": "Type of resource"
+        },
+        "price": {
+          "type": "number",
+          "description": "Price in cents (USD)"
+        },
+        "category": {
+          "type": "string",
+          "description": "Educational focus category (e.g., Sensory, Communication, Fine Motor)"
+        },
+        "mockSecureUrl": {
+          "type": "string",
+          "description": "Primary visual placeholder or asset description"
+        },
+        "content": {
+          "type": "string",
+          "description": "Gated content payload only server logs should expose or proxy via verification"
+        }
+      },
+      "required": ["id", "title", "description", "type", "price", "category"]
+    },
+    "userProfile": {
+      "title": "UserProfile",
+      "description": "Profile tracking unlocked educational resources for certified parents & educators.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Document matches the auth user UID context"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Authenticating user email"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["parent", "educator", "admin"],
+          "description": "Tailored usage view role"
+        },
+        "unlockedResourceIds": {
+          "type": "array",
+          "description": "Array of strings designating paid or subscribed unlocked items"
+        }
+      },
+      "required": ["userId", "email", "role", "unlockedResourceIds"]
+    }
+  },
+  "firestore": {
+    "resources/{resourceId}": {
+      "schema": "resource",
+      "description": "Public educational materials directory"
+    },
+    "userProfiles/{userId}": {
+      "schema": "userProfile",
+      "description": "User specific accounts storing purchased or unlocked resources"
+    }
+  }
+}
